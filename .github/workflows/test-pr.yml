@@ -21,19 +21,21 @@ jobs:
     steps:
     - name: Run Integration Tests
       run: |
-        if [[ ${{ matrix.builder }} == "builder-1"; then
-          echo "failing on builder-1"
-          exit 1
-        else
-          echo "passing on ${{ matrix.builder }}"
-          exit 0
-        fi
+        echo "always passing"
+        exit 0
 
   roundup:
-    name: Integration Tests
+    if: ${{ always() }}
     runs-on: ubuntu-22.04
-    needs: integration
+    name: Integration Tests
+    needs: [integration]
     steps:
     - run: |
-        echo "Integration tests passed against all builders"
-        exit 0
+        result="${{ needs.integration.result }}"
+        if [[ $result == "success"  ]]; then
+          echo "Integration tests passed against all builders"
+          exit 0
+        else
+          echo "Integration tests failed on one or more builders"
+          exit 1
+        fi
