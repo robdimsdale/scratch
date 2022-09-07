@@ -32,7 +32,7 @@ jobs:
   roundup:
     if: ${{ always() }}
     runs-on: ubuntu-22.04
-    name: Final Results
+    name: Integration Tests
     needs: [integration]
     steps:
     - run: |
