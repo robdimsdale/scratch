@@ -30,10 +30,17 @@ jobs:
         fi
 
   roundup:
-    name: Integration Tests
+    if: ${{ always() }}
     runs-on: ubuntu-22.04
-    needs: integration
+    name: Final Results
+    needs: [integration]
     steps:
     - run: |
-        echo "Integration tests passed against all builders"
-        exit 0
+        result="${{ needs.integration.result }}"
+        if [[ $result == "success"  ]]; then
+          echo "Integration tests passed against all builders"
+          exit 0
+        else
+          echo "Integration tests failed on one or more builders"
+          exit 1
+        fi
